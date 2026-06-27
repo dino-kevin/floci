@@ -5,6 +5,7 @@ services:
       - "4566:4566"
     volumes:
       - floci-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock  # Fix: Added to give Floci access to the host's Docker engine
     networks:
       - floci-network
     restart: unless-stopped
