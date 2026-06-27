@@ -5,7 +5,21 @@ services:
       - "4566:4566"
     volumes:
       - floci-data:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock  # Fix: Added to give Floci access to the host's Docker engine
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - floci-network
+    restart: unless-stopped
+
+  # Add the UI container here
+  floci-ui:
+    image: floci/floci-ui:latest
+    ports:
+      - "4500:4500"
+    environment:
+      # Tells the UI how to talk to the core emulator internally
+      - FLOCI_ENDPOINT=http://floci:4566
+    depends_on:
+      - floci
     networks:
       - floci-network
     restart: unless-stopped
@@ -17,6 +31,7 @@ services:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     depends_on:
       - floci
+      - floci-ui
     networks:
       - floci-network
     restart: unless-stopped
